@@ -5,39 +5,13 @@ on:
     branches:
       - main
     paths:
-      - "**/*_server.py"
+      - "deploy.py"
   workflow_dispatch:
 
 jobs:
-  detect:
-    name: Detect changed servers
-    runs-on: ubuntu-latest
-    outputs:
-      matrix: ${{ steps.set-matrix.outputs.matrix }}
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 2
-
-      - name: Find server files to deploy
-        id: set-matrix
-        run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            files=$(find . -name "*_server.py" | sed 's|^\./||' | jq -R . | jq -sc .)
-          else
-            files=$(git diff --name-only HEAD~1 HEAD | grep '_server\.py$' | jq -R . | jq -sc .)
-          fi
-          echo "matrix={\"file\":$files}" >> "$GITHUB_OUTPUT"
-          echo "Files to deploy: $files"
-
   deploy:
-    name: Deploy ${{ matrix.file }}
-    needs: detect
+    name: Deploy Modal Servers
     runs-on: ubuntu-latest
-    if: ${{ needs.detect.outputs.matrix != '{"file":[]}' }}
-    strategy:
-      matrix: ${{ fromJson(needs.detect.outputs.matrix) }}
-      fail-fast: false
     steps:
       - uses: actions/checkout@v4
 
@@ -48,8 +22,8 @@ jobs:
       - name: Install Modal
         run: pip install modal
 
-      - name: Deploy ${{ matrix.file }}
-        run: modal deploy ${{ matrix.file }}
+      - name: Run deploy script
+        run: python deploy.py
         env:
           MODAL_TOKEN_ID: ${{ secrets.MODAL_TOKEN_ID }}
           MODAL_TOKEN_SECRET: ${{ secrets.MODAL_TOKEN_SECRET }}
