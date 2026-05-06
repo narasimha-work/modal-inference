@@ -1,16 +1,15 @@
 import subprocess
 import sys
 
-SERVERS = [
-    "qwen35_server.py",
-    # "gemma4_server.py",       # uncomment to deploy
-    # "gemma3_server.py",       # uncomment to deploy
-    # "gemma4_server_fp8.py",   # uncomment to deploy
+MODELS = [
+    "qwen35_model.py",
+    # "gemma4_model.py",        # uncomment to deploy
+    # "gemma4_fp8_model.py",    # uncomment to deploy
 ]
 
-for server in SERVERS:
-    print(f"\n>>> Deploying {server}")
-    result = subprocess.run(["modal", "deploy", server])
+for model in MODELS:
+    print(f"\n>>> Deploying {model}")
+    result = subprocess.run(["modal", "deploy", model])
     if result.returncode != 0:
-        print(f"FAILED: {server}")
+        print(f"FAILED: {model}")
         sys.exit(1)
