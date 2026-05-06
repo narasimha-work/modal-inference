@@ -2,7 +2,8 @@ import subprocess
 import sys
 
 MODELS = [
-    "qwen35_model.py",
+    "gemma4_e4b_model.py",
+    # "qwen35_model.py",        # uncomment to deploy
     # "gemma4_model.py",        # uncomment to deploy
     # "gemma4_fp8_model.py",    # uncomment to deploy
 ]
